@@ -71,7 +71,6 @@ public class CaptureService extends Service {
         windowManager.getDefaultDisplay().getMetrics(displayMetrics);
         screenDensity = displayMetrics.densityDpi;
         imageReader = ImageReader.newInstance(windowWidth, windowHeight, 0x1, 2);
-
     }
 
     @Override
@@ -85,9 +84,7 @@ public class CaptureService extends Service {
 
     private void startVirtual() {
         //open virtual screen
-        if (mediaProjection != null) {
-
-        } else {
+        if (mediaProjection == null) {
             int resultCode = myApplication.getResultCode();
             Intent resultIntent = myApplication.getResultIntent();
             mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, resultIntent);
