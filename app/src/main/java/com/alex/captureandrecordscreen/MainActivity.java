@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         btn_record.setOnClickListener(this);
 
         mediaProjectionManager = (MediaProjectionManager) getApplicationContext().getSystemService(MEDIA_PROJECTION_SERVICE);
-//        this.resultCode = ((MyApplication) getApplication()).getResultCode();
-//        this.resultIntent = ((MyApplication) getApplication()).getResultIntent();
     }
 
     @Override
@@ -50,10 +48,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     private void startIntent() {
-        if ((resultCode == 0) || (resultIntent == null)) {
+        if ((resultCode == 0) || (resultIntent == null))
+        {
             //has not got MediaProjectionManager result code and intent.
             Intent intent = mediaProjectionManager.createScreenCaptureIntent();
             startActivityForResult(intent, REQUEST_CODE);
+        }
+        if (captureService!=null){
+            moveTaskToBack(true);
+            captureService.start(myApplication);
         }
     }
 
@@ -67,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                 myApplication.setmediaProjectionManager(mediaProjectionManager);
                 myApplication.setResultCode(this.resultCode);
                 myApplication.setResultIntent(this.resultIntent);
-                processBtn();
                 moveTaskToBack(true);
+                processBtn();
             }
         }
     }

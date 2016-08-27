@@ -34,7 +34,7 @@ public class CaptureService extends Service {
     private int windowWidth, windowHeight, screenDensity;
     private ImageReader imageReader;
     private VirtualDisplay virtualDisplay;
-
+    private boolean isRestart = false;
     public CaptureService() {
     }
 
@@ -58,7 +58,12 @@ public class CaptureService extends Service {
     }
 
     private void createEnvironment() {
-        imagePath = Environment.getExternalStorageDirectory().getPath();//+ "/CaptureAndRecordScreen/Capture/";
+
+        if (isRestart)
+            return;
+        isRestart = true;
+        imagePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        imagePath = imagePath + "/CaptureAndRecordScreen/";
         File dirFile = new File(imagePath);
         if (!dirFile.exists()) {
             dirFile.mkdirs();
@@ -122,9 +127,6 @@ public class CaptureService extends Service {
         if (bitmap != null) {
             Log.e(MainActivity.TAG, "bitmap  create success ");
             try {
-                File fileFolder = new File(imagePath);
-                if (!fileFolder.exists())
-                    fileFolder.mkdirs();
                 File file = new File(imagePath, mImageName);
                 if (!file.exists()) {
                     Log.e(MainActivity.TAG, "file create success ");
@@ -136,6 +138,7 @@ public class CaptureService extends Service {
                 out.close();
                 Log.e(MainActivity.TAG, "file save success ");
                 Toast.makeText(this.getApplicationContext(), "截图成功", Toast.LENGTH_SHORT).show();
+                stopVirtual();
             } catch (IOException e) {
                 Log.e(MainActivity.TAG, e.toString());
                 e.printStackTrace();
@@ -154,7 +157,7 @@ public class CaptureService extends Service {
                 Log.e(MainActivity.TAG, "start startVirtual");
                 startVirtual();
             }
-        }, 500);
+        }, 300);
         // Handler handler1 = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -162,14 +165,6 @@ public class CaptureService extends Service {
                 Log.e(MainActivity.TAG, "start startCapture");
                 startCapture();
             }
-        }, 1000);
-        // Handler handler2 = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(MainActivity.TAG, "start stopVirtual");
-                stopVirtual();
-            }
-        }, 1500);
+        }, 500);
     }
 }
